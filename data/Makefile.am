@@ -1,0 +1,1 @@
+EXTRA_DIST = fonts/FreeMonoBoldOblique.ttf fonts/FreeMono.ttf images/black_chip_80x80.png images/board_1400x1400.png images/orientation_80x80.png images/striker_80x80.png images/white_chip_80x80.png sound/low_collision.wav
