@@ -264,6 +264,11 @@ void render()
 
 int main()
 {
+  if(chdir(PKGDATADIR) != 0)
+  {
+    printf("data directory %s not found.", PKGDATADIR);
+  }
+
   init();
 
   init_camera();

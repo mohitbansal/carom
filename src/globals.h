@@ -5,6 +5,8 @@
 #include <malloc.h>
 #include <math.h>
 
+#include <unistd.h>
+
 #define TITLE ""
 #define SCREEN_X 100
 #define SCREEN_Y 100

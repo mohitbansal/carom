@@ -1,4 +1,4 @@
-AC_INIT([carom], [1.0], [mohitbansal031290@gmail.com])
+AC_INIT([carom], [1.1], [mohitbansal031290@gmail.com])
 AM_INIT_AUTOMAKE([-Wall -Werror])
 AC_LANG(C++)
 AC_PROG_CXX

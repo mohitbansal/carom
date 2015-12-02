@@ -13,6 +13,7 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -105,6 +106,36 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+am__installdirs = "$(DESTDIR)$(Fontsdir)" "$(DESTDIR)$(Imagesdir)" \
+	"$(DESTDIR)$(Sounddir)"
+DATA = $(Fonts_DATA) $(Images_DATA) $(Sound_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
@@ -199,7 +230,14 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = fonts/FreeMonoBoldOblique.ttf fonts/FreeMono.ttf images/black_chip_80x80.png images/board_1400x1400.png images/orientation_80x80.png images/striker_80x80.png images/white_chip_80x80.png sound/low_collision.wav
+Resourcesdir = $(pkgdatadir)/data
+Fontsdir = $(Resourcesdir)/fonts
+Fonts_DATA = fonts/FreeMonoBoldOblique.ttf fonts/FreeMono.ttf
+Imagesdir = $(Resourcesdir)/images
+Images_DATA = images/black_chip_80x80.png images/board_1400x1400.png images/orientation_80x80.png images/striker_80x80.png images/white_chip_80x80.png
+Sounddir = $(Resourcesdir)/sound
+Sound_DATA = sound/low_collision.wav
+EXTRA_DIST = $(Fonts_DATA) $(Images_DATA) $(Sound_DATA)
 all: all-am
 
 .SUFFIXES:
@@ -233,6 +271,69 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+install-FontsDATA: $(Fonts_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(Fonts_DATA)'; test -n "$(Fontsdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(Fontsdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(Fontsdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(Fontsdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(Fontsdir)" || exit $$?; \
+	done
+
+uninstall-FontsDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(Fonts_DATA)'; test -n "$(Fontsdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(Fontsdir)'; $(am__uninstall_files_from_dir)
+install-ImagesDATA: $(Images_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(Images_DATA)'; test -n "$(Imagesdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(Imagesdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(Imagesdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(Imagesdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(Imagesdir)" || exit $$?; \
+	done
+
+uninstall-ImagesDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(Images_DATA)'; test -n "$(Imagesdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(Imagesdir)'; $(am__uninstall_files_from_dir)
+install-SoundDATA: $(Sound_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(Sound_DATA)'; test -n "$(Sounddir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(Sounddir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(Sounddir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(Sounddir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(Sounddir)" || exit $$?; \
+	done
+
+uninstall-SoundDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(Sound_DATA)'; test -n "$(Sounddir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(Sounddir)'; $(am__uninstall_files_from_dir)
 tags TAGS:
 
 ctags CTAGS:
@@ -272,8 +373,11 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile
+all-am: Makefile $(DATA)
 installdirs:
+	for dir in "$(DESTDIR)$(Fontsdir)" "$(DESTDIR)$(Imagesdir)" "$(DESTDIR)$(Sounddir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -324,7 +428,8 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-FontsDATA install-ImagesDATA \
+	install-SoundDATA
 
 install-dvi: install-dvi-am
 
@@ -368,20 +473,23 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am:
+uninstall-am: uninstall-FontsDATA uninstall-ImagesDATA \
+	uninstall-SoundDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic cscopelist-am \
 	ctags-am distclean distclean-generic distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
+	html-am info info-am install install-FontsDATA \
+	install-ImagesDATA install-SoundDATA install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
 	install-info-am install-man install-pdf install-pdf-am \
 	install-ps install-ps-am install-strip installcheck \
 	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am tags-am uninstall uninstall-am
+	pdf-am ps ps-am tags-am uninstall uninstall-FontsDATA \
+	uninstall-ImagesDATA uninstall-SoundDATA uninstall-am
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
